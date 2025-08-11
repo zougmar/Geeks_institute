@@ -1,5 +1,1 @@
-output = "Hello world"
-print(output)
-print(output)
-print(output)
-print(output)
+print("Hello world\n" *4)
