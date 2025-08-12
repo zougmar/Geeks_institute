@@ -25,3 +25,14 @@ if "international_competitors" in brand:
 print(brand["international_competitors"])
 del brand["creation_date"]
 print(brand)
+print("The last international competitor is:", brand["international_competitors"][-1])
+print("The major colors in the US are:", ", ".join(brand["major_color"]["US"]))
+print(len(brand))
+print(brand.keys())
+more_on_zara = {
+    "creation_date": 1975,
+    "number_stores": 10000
+}
+brand.update(more_on_zara)
+print(brand)
+print(brand["number_stores"])
