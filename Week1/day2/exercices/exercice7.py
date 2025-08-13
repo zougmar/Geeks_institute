@@ -1,11 +1,19 @@
 import random
-def get_random_temp():
-    return random.randint(-10, 40)
+def get_random_temp(season):
+    if season == "summer":
+        return random.randint(24, 40)
+    elif season == "winter":
+        return random.randint(-10, 16)
+    elif season == "spring" or season == "autumn":
+        return random.randint(0, 23)
+    else:
+        raise ValueError("Invalid season. Choose from 'summer', 'winter', 'spring', or 'autumn'.")
 for _ in range(5):
- print(f"Random temperature: {get_random_temp()}°C")
+#  print(f"Random temperature: {get_random_temp()}°C")
 
  def main():
-    store_temps = get_random_temp()
+    season = input("Enter the season (summer, winter, spring, autumn): ").strip().lower()
+    store_temps = get_random_temp(season)
     print(f"The temperature right now is : {store_temps}°C")
     if store_temps < 0:
         print("Brrr, that’s freezing! Wear some extra layers today")
