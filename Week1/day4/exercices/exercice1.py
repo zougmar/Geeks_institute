@@ -41,4 +41,4 @@ all_cats = [
 ]
 
 sara_pets  = Pets(all_cats)
-print(sara_pets.walk())
+sara_pets.walk()
