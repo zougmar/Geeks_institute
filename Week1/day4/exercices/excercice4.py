@@ -34,6 +34,5 @@ my_family.born(name='John', age=5, gender='Male', is_child=True)
 # Check if a member is 18
 print(my_family.is_18('Michael'))  # Output: True
 print(my_family.is_18('John'))  # Output: False
-print(my_family.is_18('Alice'))  # Output: No member named Alice found.
 
 my_family.family_presentation()  # Show updated family presentation
