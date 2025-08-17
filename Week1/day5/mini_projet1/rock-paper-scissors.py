@@ -1,5 +1,5 @@
 # rock-paper-scissors.py
-from game import Game
+from Week1.day5.mini_projet1.game import Game
 
 def get_user_menu_choice():
     print("\nMenu:")
