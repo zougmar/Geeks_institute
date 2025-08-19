@@ -9,6 +9,16 @@
             "name": "first_connection",
             "database": "public",
             "username": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "Students_Connections",
+            "database": "bootcamp",
+            "username": "postgres"
         }
     ]
 }
