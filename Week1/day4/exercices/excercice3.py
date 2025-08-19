@@ -13,15 +13,16 @@ class PetDog(Dog):
 # of other Dog instances (use *args). The method should print the 
 # following string: “dog_names all play together”.
     def play(self, *args):
-        names = ', '.join([dog.name for dog in args])
+        names = ', '.join([self.name for dog in args])
         return f"{names} all play together."
     
     def do_a_trick(self):
-        if self.trained:
+        if self.trained == True:
             tricks = [f"{self.name} does a barrel roll", f"{self.name} stands on his back legs", f"{self.name} shakes hands", f"{self.name} plays dead"]
             return f"{self.name} {random.choice(tricks)}!"
         else:
             return f"{self.name} is not trained to do tricks yet."
 dog1 = PetDog("Rex", 5, 50)
-dog2 = PetDog("Teacup", 3, 20)
-dog3 = PetDog("Buddy", 4, 30)
+
+t1 = PetDog("Teacup", 3, 20, True)
+print(t1.do_a_trick())
