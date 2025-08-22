@@ -1,4 +1,4 @@
-    -- Find out how many films there are for each rating.
+-- Find out how many films there are for each rating.
 SELECT rating, COUNT(*) AS film_count
 FROM film
 GROUP BY rating
@@ -34,3 +34,18 @@ WHERE address_id = (
     FROM customer
     WHERE customer_id = 1
 );
+
+UPDATE address
+SET address = '123 Main Street',
+    district = 'Casablanca',
+    city_id = 1,
+    postal_code = '20000',
+    phone = '0612345678'
+WHERE address_id = (
+    SELECT address_id 
+    FROM customer
+    WHERE customer_id = 1
+);
+
+
+
