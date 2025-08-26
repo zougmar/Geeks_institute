@@ -16,6 +16,7 @@ class PetDog(Dog):
         names = ', '.join([self.name for dog in args])
         return f"{names} all play together."
     
+
     def do_a_trick(self):
         if self.trained == True:
             tricks = [f"{self.name} does a barrel roll", f"{self.name} stands on his back legs", f"{self.name} shakes hands", f"{self.name} plays dead"]
@@ -26,3 +27,5 @@ dog1 = PetDog("Rex", 5, 50)
 
 t1 = PetDog("Teacup", 3, 20, True)
 print(t1.do_a_trick())
+print(t1.train())
+print(t1.play(dog1, t1))
