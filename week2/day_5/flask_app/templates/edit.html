@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main class="max-w-2xl mx-auto my-10">
+
+  <!-- Show flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-6">
+        {% for category, message in messages %}
+          <div class="p-3 rounded {{ 'bg-blue-200 text-blue-800' if category=='blue' else 'bg-red-200 text-red-800' }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Album Image Preview -->
+  {% if album.image_url %}
+    <div class="mb-6 text-center">
+      <img src="{{ album.image_url }}" alt="{{ album.title }}" class="w-48 h-48 object-cover rounded-xl mx-auto shadow-lg">
+    </div>
+  {% endif %}
+
+  <form
+    action="/edit/{{ album.id }}"
+    method="post"
+    class="flex flex-col gap-5 p-8 bg-white border border-gray-200 rounded-3xl shadow-lg"
+  >
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Edit Album</h1>
+
+    <!-- Album Title -->
+    <input
+      type="text"
+      name="title"
+      value="{{ album.title }}"
+      placeholder="Album Title"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      required
+    />
+
+    <!-- Release Year -->
+    <input
+      type="number"
+      name="release_year"
+      value="{{ album.release_year }}"
+      placeholder="Release Year"
+      min="1900"
+      max="2050"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+
+    <!-- Rating -->
+    <input
+      type="number"
+      step="0.1"
+      name="rating"
+      value="{{ album.rating }}"
+      placeholder="Rating"
+      min="0"
+      max="10"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+
+    <!-- Genre -->
+    <select
+      name="genre_id"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    >
+      <option value="" disabled>Select Genre</option>
+      {% for genre in genres %}
+        <option value="{{ genre.id }}" {% if album.genre_id == genre.id %}selected{% endif %}>
+          {{ genre.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <!-- Description -->
+    <textarea
+      name="description"
+      placeholder="Description"
+      rows="6"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    >{{ album.description }}</textarea>
+
+    <!-- Image URL -->
+    <input
+      type="text"
+      name="image_url"
+      value="{{ album.image_url }}"
+      placeholder="Image URL"
+      class="border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="bg-blue-600 text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition"
+    >
+      <i class="bi bi-pencil-fill"></i> Update Album
+    </button>
+  </form>
+</main>
+
+{% endblock %}

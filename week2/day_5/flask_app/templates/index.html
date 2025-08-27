@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main class="max-w-7xl mx-auto my-10">
+  <h1 class="text-4xl font-extrabold text-gray-900 mb-10">🎵 Music Library</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+    {% for album in albums %}
+    <div class="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 duration-300 group">
+
+      <!-- Album Cover -->
+      <a href="/albums/{{ album.id }}">
+        <img
+          src="{{ album.image_url }}"
+          alt="{{ album.title }}"
+          class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </a>
+
+      <!-- Rating Badge -->
+      <div class="absolute top-3 right-3 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full flex items-center gap-1 text-sm font-semibold shadow z-10">
+        <i class="bi bi-star-fill"></i> {{ album.rating }}
+      </div>
+
+      <!-- Album Info -->
+      <div class="p-5 flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-gray-900 truncate">{{ album.title }}</h2>
+        <p class="text-sm text-gray-500">{{ album.release_year }} • {{ album.genre }}</p>
+        <p class="text-sm text-gray-500">By: {{ album.artists }}</p>
+        <p class="text-gray-600 text-sm mt-2 line-clamp-3">{{ album.description }}</p>
+
+        <!-- Buttons -->
+        <div class="mt-4 flex gap-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <a href="/albums/{{ album[0] }}">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-full">Play</button>
+          </a>
+
+
+          <a href="/edit/{{ album.id }}">
+            <button class="bg-green-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow hover:bg-green-700 transition">
+              <i class="bi bi-pencil-fill"></i> Edit
+            </button>
+          </a>
+
+          <form action="/delete/{{ album.id }}" method="post" onsubmit="return confirm('Are you sure?');">
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow hover:bg-red-700 transition">
+              <i class="bi bi-trash-fill"></i> Delete
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+</main>
+
+{% endblock %}

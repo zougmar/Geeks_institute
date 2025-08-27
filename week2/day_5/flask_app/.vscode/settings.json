@@ -1,0 +1,40 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "falsk_app",
+            "connectString": "postgresql://neondb_owner:npg_vWueLdX4wUo3@ep-autumn-bar-adknofbv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "music_app",
+            "connectString": "postgresql://neondb_owner:npg_m4UYkjEpOzq8@ep-divine-resonance-adt5d47j-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "music",
+            "connectString": "postgresql://neondb_owner:npg_m4UYkjEpOzq8@ep-divine-resonance-adt5d47j-pooler.c-2.us-east-1.aws.neon.tech/music_db?sslmode=require&channel_binding=require"
+        }
+    ]
+}

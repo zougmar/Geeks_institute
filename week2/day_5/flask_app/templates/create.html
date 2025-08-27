@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% block content %}
+
+<main class="max-w-7xl mx-auto my-10">
+  <form
+    action="/create"
+    method="post"
+    class="flex flex-col gap-4 max-w-md mx-auto mt-4 p-4 bg-white border border-gray-200 rounded-md"
+  >
+    <h1 class="text-2xl font-bold">Create Album</h1>
+
+    <input
+      required
+      type="text"
+      name="title"
+      placeholder="Album Title"
+      class="border border-gray-200 rounded-md p-2"
+    />
+
+    <input
+      type="number"
+      name="rating"
+      placeholder="Rating"
+      min="0"
+      max="10"
+      step="0.1"
+      class="border border-gray-200 rounded-md p-2"
+    />
+
+    <input
+      type="number"
+      name="release_year"
+      placeholder="Release Year"
+      min="1900"
+      max="2050"
+      class="border border-gray-200 rounded-md p-2"
+    />
+
+    <select
+      name="genre_id"
+      class="border border-gray-200 rounded-md p-2"
+    >
+      <option value="" selected disabled>Select Genre</option>
+      {% for genre in genres %}
+        <option value="{{ genre.id }}">{{ genre.name }}</option>
+      {% endfor %}
+    </select>
+
+    <textarea
+      name="description"
+      placeholder="Description"
+      rows="6"
+      class="border border-gray-200 rounded-md p-2"
+    ></textarea>
+
+    <button
+      type="submit"
+      class="bg-gray-600 text-white px-4 py-2 rounded-md flex items-center justify-center gap-2"
+    >
+      <i class="bi bi-plus-lg"></i>
+      Create
+    </button>
+  </form>
+</main>
+
+{% endblock %}
+  

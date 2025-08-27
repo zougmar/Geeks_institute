@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">📊 Music Analytics</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Chart 1: Albums per Genre -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h2 class="text-xl font-semibold mb-4">Albums per Genre</h2>
+    <canvas id="genreChart"></canvas>
+  </div>
+
+  <!-- Chart 2: Albums per Year -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h2 class="text-xl font-semibold mb-4">Albums per Year</h2>
+    <canvas id="yearChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Data from Flask
+  const genreLabels = {{ genre_data | map(attribute=0) | list | tojson }};
+  const genreCounts = {{ genre_data | map(attribute=1) | list | tojson }};
+  const yearLabels = {{ year_data | map(attribute=0) | list | tojson }};
+  const yearCounts = {{ year_data | map(attribute=1) | list | tojson }};
+
+  // Chart 1: Bar Chart (Albums per Genre)
+  new Chart(document.getElementById('genreChart'), {
+    type: 'bar',
+    data: {
+      labels: genreLabels,
+      datasets: [{
+        label: 'Albums',
+        data: genreCounts,
+        borderWidth: 1,
+        backgroundColor: '#4F46E5'
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  // Chart 2: Line Chart (Albums per Year)
+  new Chart(document.getElementById('yearChart'), {
+    type: 'line',
+    data: {
+      labels: yearLabels,
+      datasets: [{
+        label: 'Albums Released',
+        data: yearCounts,
+        fill: true,
+        borderColor: '#10B981',
+        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true }
+  });
+</script>
+{% endblock %}
