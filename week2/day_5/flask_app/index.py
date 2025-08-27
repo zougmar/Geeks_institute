@@ -49,60 +49,111 @@ def index():
     return render_template('index.html', albums=albums)
 
 
-@app.route('/')
+# --------------------
+# DASHBOARD
+# --------------------
 @app.route('/dashboard')
 def dashboard():
     conn = connect_to_db()
     if not conn:
-        return render_template('dashboard.html', albums=[], total_albums=0, total_artists=0, total_genres=0, total_plays=0)
+        return render_template('dashboard.html',
+                               albums=[],
+                               total_albums=0,
+                               total_artists=0,
+                               total_genres=0,
+                               total_plays=0,
+                               genre_data=[],
+                               year_data=[])
 
     cursor = conn.cursor()
+    
+    # Fetch albums for table
     cursor.execute("""
-    SELECT a.id, a.title, a.description, a.release_year, a.rating,
-           g.name AS genre,
-           STRING_AGG(ar.name, ', ') AS artists,
-           a.image_url
-    FROM albums a
-    LEFT JOIN genres g ON a.genre_id = g.id
-    LEFT JOIN albums_artists aa ON a.id = aa.album_id
-    LEFT JOIN artists ar ON aa.artist_id = ar.id
-    GROUP BY a.id, g.name, a.image_url
-    ORDER BY a.release_year DESC
-""")
-
-    albums = cursor.fetchall()
-    conn.close()
-
-    total_albums = len(albums)
-    total_artists = 5  # you can calculate dynamically if needed
-    total_genres = 3   # you can calculate dynamically if needed
-    total_plays = 1200 # example
-
-    return render_template(
-        'dashboard.html',
-        albums=albums,
-        total_albums=total_albums,
-        total_artists=total_artists,
-        total_genres=total_genres,
-        total_plays=total_plays
-    )
-
-@app.route('/charts')   
-def charts():
-    conn = connect_to_db()
-    if not conn:
-        return render_template('charts.html', albums=[])
-
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT a.id, a.title, g.name AS genre, a.image_url
+        SELECT a.id, a.title, a.description, a.release_year, a.rating,
+               g.name AS genre,
+               STRING_AGG(ar.name, ', ') AS artists,
+               a.image_url
         FROM albums a
         LEFT JOIN genres g ON a.genre_id = g.id
+        LEFT JOIN albums_artists aa ON a.id = aa.album_id
+        LEFT JOIN artists ar ON aa.artist_id = ar.id
+        GROUP BY a.id, g.name, a.image_url
+        ORDER BY a.release_year DESC
     """)
     albums = cursor.fetchall()
+    
+    # Stats
+    cursor.execute("SELECT COUNT(*) FROM artists")
+    total_artists = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM genres")
+    total_genres = cursor.fetchone()[0]
+    total_albums = len(albums)
+    total_plays = 1200  # Example
+
+    # Albums per genre
+    cursor.execute("""
+        SELECT COALESCE(g.name, 'Unknown') AS genre, COUNT(a.id)
+        FROM albums a
+        LEFT JOIN genres g ON a.genre_id = g.id
+        GROUP BY genre
+        ORDER BY COUNT(a.id) DESC
+    """)
+    genre_data = cursor.fetchall()
+
+    # Albums per year
+    cursor.execute("""
+        SELECT COALESCE(a.release_year, 0) AS year, COUNT(a.id)
+        FROM albums a
+        GROUP BY year
+        ORDER BY year
+    """)
+    year_data = cursor.fetchall()
+
     conn.close()
 
-    return render_template('charts.html', albums=albums)
+    return render_template('dashboard.html',
+                           albums=albums,
+                           total_albums=total_albums,
+                           total_artists=total_artists,
+                           total_genres=total_genres,
+                           total_plays=total_plays,
+                           genre_data=genre_data,
+                           year_data=year_data)
+
+
+# --------------------
+# CHARTS PAGE (OPTIONAL)
+# --------------------
+@app.route('/charts')
+def charts_page():
+    conn = connect_to_db()
+    if not conn:
+        return render_template('charts.html', genre_data=[], year_data=[])
+
+    cursor = conn.cursor()
+
+    # Albums per genre
+    cursor.execute("""
+        SELECT COALESCE(g.name, 'Unknown') AS genre, COUNT(a.id)
+        FROM albums a
+        LEFT JOIN genres g ON a.genre_id = g.id
+        GROUP BY genre
+        ORDER BY COUNT(a.id) DESC
+    """)
+    genre_data = cursor.fetchall()
+
+    # Albums per year
+    cursor.execute("""
+        SELECT COALESCE(a.release_year, 0) AS year, COUNT(a.id)
+        FROM albums a
+        GROUP BY year
+        ORDER BY year
+    """)
+    year_data = cursor.fetchall()
+
+    conn.close()
+    return render_template('charts.html', genre_data=genre_data, year_data=year_data)
+
 
 # --------------------
 # ALBUM DETAIL
@@ -150,7 +201,7 @@ def create():
         rating = request.form.get('rating')
         genre_id = request.form.get('genre_id')
         image_url = request.form.get('image_url')
-        genre_id = int(genre_id) if genre_id else None  # ✅ convert to int or None
+        genre_id = int(genre_id) if genre_id else None
 
         if not title or not description or not release_year or not rating:
             flash("All fields are required", "red")
@@ -188,7 +239,6 @@ def edit(id):
         conn.close()
         return redirect(url_for('index'))
 
-    # Map tuple to dict
     album = {
         "id": album_row[0],
         "title": album_row[1],
@@ -199,26 +249,19 @@ def edit(id):
         "image_url": album_row[6]
     }
 
-    # Fetch genres
     cursor.execute("SELECT * FROM genres ORDER BY name")
     genres_rows = cursor.fetchall()
     genres = [{"id": g[0], "name": g[1]} for g in genres_rows]
 
-    # Handle form submission
     if request.method == 'POST':
         title = request.form.get('title', 'no title')
         description = request.form.get('description', 'no description')
-        release_year = request.form.get('release_year', 0)
-        rating = request.form.get('rating', 0)
-        genre_id = request.form.get('genre_id', None)
+        release_year = int(request.form.get('release_year', 0))
+        rating = float(request.form.get('rating', 0))
+        genre_id = request.form.get('genre_id')
         genre_id = int(genre_id) if genre_id else None
         image_url = request.form.get('image_url', 'no image')
 
-        # Convert types
-        release_year = int(release_year) if release_year else None
-        rating = float(rating) if rating else None
-
-        # Update album
         cursor.execute("""
             UPDATE albums
             SET title=%s, description=%s, release_year=%s, rating=%s, genre_id=%s, image_url=%s
@@ -229,7 +272,6 @@ def edit(id):
 
         flash("Album updated successfully!", "blue")
         return redirect(url_for('index'))
-
 
     conn.close()
     return render_template('edit.html', album=album, genres=genres)
@@ -252,38 +294,5 @@ def delete(id):
     flash("Album deleted successfully", "blue")
     return redirect(url_for('index'))
 
-
-@app.route('/charts')
-def charts_page():   # changed from charts → charts_page
-    conn = connect_to_db()
-    if not conn:
-        return render_template('charts.html', genre_data=[], year_data=[])
-
-    cursor = conn.cursor()
-
-    # Albums per genre
-    cursor.execute("""
-        SELECT COALESCE(g.name, 'Unknown') AS genre, COUNT(a.id)
-        FROM albums a
-        LEFT JOIN genres g ON a.genre_id = g.id
-        GROUP BY genre
-        ORDER BY COUNT(a.id) DESC
-    """)
-    genre_data = cursor.fetchall()
-
-    # Albums per year
-    cursor.execute("""
-        SELECT COALESCE(a.release_year, 0) AS year, COUNT(a.id)
-        FROM albums a
-        GROUP BY year
-        ORDER BY year
-    """)
-    year_data = cursor.fetchall()
-
-    conn.close()
-    return render_template('charts.html', genre_data=genre_data, year_data=year_data)
-
-
 if __name__ == '__main__':
-
     app.run(debug=True, port=5001)
