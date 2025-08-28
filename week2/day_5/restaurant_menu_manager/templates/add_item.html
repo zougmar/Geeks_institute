@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto py-12">
+    <div class="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Add New Menu Item</h1>
+
+        <form action="{{ url_for('add_item') }}" method="POST" class="space-y-6">
+            <!-- Item Name -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Item Name</label>
+                <input 
+                    type="text" 
+                    name="name" 
+                    placeholder="Enter item name"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                    required
+                >
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Category</label>
+                <select 
+                    name="category" 
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                >
+                    <option value="" disabled selected>Select a category</option>
+                    {% for category in categories %}
+                        <option value="{{ category[0] }}">{{ category[1] }}</option>
+                    {% endfor %}
+                    <!-- Example categories if you want hardcoded: -->
+                    
+                    <option value="1">Appetizers</option>
+                    <option value="2">Main Courses</option>
+                    <option value="3">Desserts</option>
+                    <option value="4">Salads</option>
+                    <option value="5">Soups</option>
+                    <option value="6">Beverages</option>
+                    <option value="7">Breakfast</option>
+                    <option value="8">Lunch Specials</option>
+                    <option value="9">Dinner Specials</option>
+                    <option value="10">Snacks</option>
+                   
+                </select>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Price</label>
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    name="price" 
+                    placeholder="Enter price in USD"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                >
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-between items-center">
+                <a href="{{ url_for('menu') }}" class="bg-gray-400 text-white px-6 py-2 rounded-lg shadow hover:bg-gray-500 transition duration-200">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition duration-200">
+                    Add Item
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
