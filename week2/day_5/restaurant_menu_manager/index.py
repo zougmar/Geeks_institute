@@ -226,21 +226,33 @@ def login_required(f):
 
 @app.route('/menu')
 def menu_page():
+    search_query = request.args.get('search', '').strip()  # Get search input from query parameters
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("""
-        SELECT m.id, m.name, m.price, m.category, i.image_url
-        FROM menu_items m
-        LEFT JOIN images i ON m.id = i.menu_item_id
-    """)
-    
-    items = cursor.fetchall()  # Now each item is a dict: {'id':..., 'name':..., 'image_url':...}
-    
+
+    if search_query:
+        cursor.execute("""
+            SELECT m.id, m.name, m.price, m.category, i.image_url
+            FROM menu_items m
+            LEFT JOIN images i ON m.id = i.menu_item_id
+            WHERE m.name ILIKE %s OR m.category ILIKE %s
+            ORDER BY m.id;
+        """, (f'%{search_query}%', f'%{search_query}%'))
+    else:
+        cursor.execute("""
+            SELECT m.id, m.name, m.price, m.category, i.image_url
+            FROM menu_items m
+            LEFT JOIN images i ON m.id = i.menu_item_id
+            ORDER BY m.id;
+        """)
+
+    items = cursor.fetchall()  # Each item is a tuple: (id, name, price, category, image_url)
+
     cursor.close()
     conn.close()
-    
-    return render_template('menu.html', items=items)
+
+    return render_template('menu.html', items=items, search_query=search_query)
+
 
 @app.route('/profile')
 @login_required
