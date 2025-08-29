@@ -1,16 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from werkzeug.security import generate_password_hash
-from flask_login import login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import logout_user
 import psycopg2
 import psycopg2.extras 
 import os
 from dotenv import load_dotenv
 from datetime import datetime
 from functools import wraps
+import math
 load_dotenv()
-
+ITEMS_PER_PAGE = 6
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
+app.secret_key = os.getenv('SECRET_KEY')
 
 # -----------------------------
 # Database configuration
@@ -28,6 +29,7 @@ DB_SSLMODE = os.getenv("PGSSLMODE", "require")
 @app.context_processor
 def inject_now():
     return {'now': datetime.now}
+
 
 # -----------------------------
 # Database connection
@@ -52,20 +54,55 @@ def home():
 
 @app.route('/menu')
 def menu():
+    search_query = request.args.get('search', '').strip()
+    page = request.args.get('page', 1, type=int)  # current page, default 1
+
     conn = get_db_connection()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("""
-        SELECT m.id, m.name, m.price, c.name AS category_name, m.image_url
-        FROM Menu_Items m
-        LEFT JOIN Categories c ON m.category = c.name
-        ORDER BY m.id;
-    """)
+    cursor = conn.cursor()  # or use DictCursor if needed
+
+    # Base query with COALESCE
+    base_query = """
+        FROM menu_items m
+        LEFT JOIN images i ON m.id = i.menu_item_id
+    """
+
+    # Count total items for pagination
+    if search_query:
+        cursor.execute("SELECT COUNT(*) " + base_query + 
+                       " WHERE m.name ILIKE %s OR m.category ILIKE %s",
+                       (f'%{search_query}%', f'%{search_query}%'))
+    else:
+        cursor.execute("SELECT COUNT(*) " + base_query)
+    total_items = cursor.fetchone()[0]
+    total_pages = math.ceil(total_items / ITEMS_PER_PAGE)
+
+    # Fetch current page items
+    offset = (page - 1) * ITEMS_PER_PAGE
+    select_query = """
+        SELECT 
+            m.id, 
+            m.name, 
+            m.price, 
+            m.category, 
+            COALESCE(i.image_url, m.image_url) AS image_url
+    """ + base_query
+
+    if search_query:
+        select_query += " WHERE m.name ILIKE %s OR m.category ILIKE %s ORDER BY m.id LIMIT %s OFFSET %s"
+        cursor.execute(select_query, (f'%{search_query}%', f'%{search_query}%', ITEMS_PER_PAGE, offset))
+    else:
+        select_query += " ORDER BY m.id LIMIT %s OFFSET %s"
+        cursor.execute(select_query, (ITEMS_PER_PAGE, offset))
+
     items = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template('menu.html', items=items)
 
-
+    return render_template('menu.html', 
+                           items=items, 
+                           search_query=search_query, 
+                           page=page, 
+                           total_pages=total_pages)
 @app.route('/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
@@ -91,6 +128,7 @@ def add_item():
         return redirect(url_for('menu'))
 
     return render_template('add_item.html')
+
 
 @app.route('/update/<int:item_id>', methods=['GET', 'POST'])
 def update_item(item_id):
@@ -125,6 +163,7 @@ def update_item(item_id):
     conn.close()
     return render_template('update_item.html', item=item)
 
+
 @app.route('/delete/<int:item_id>')
 def delete_item(item_id):
     conn = get_db_connection()
@@ -135,6 +174,7 @@ def delete_item(item_id):
     conn.close()
     flash('Item deleted successfully!', 'success')
     return redirect(url_for('menu'))
+
 
 # -----------------------------
 # Dashboard
@@ -171,9 +211,18 @@ def dashboard():
     )
 
 
-# Login
-from werkzeug.security import check_password_hash
-from flask import session, flash, redirect, url_for, request, render_template
+# -----------------------------
+# LOGIN / LOGOUT / SIGNUP
+# -----------------------------
+def login_required_custom(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('Please log in to access this page.', 'danger')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -183,16 +232,15 @@ def login():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT id, password FROM users WHERE username=%s', (username,))
+        cursor.execute('SELECT username, password FROM users WHERE username=%s', (username,))
         user = cursor.fetchone()
         cursor.close()
         conn.close()
 
         if user and check_password_hash(user[1], password):
-            session['user_id'] = user[0]
-            session['username'] = username
+            session['username'] = user[0]
             flash('Logged in successfully!', 'success')
-            return redirect(url_for('profile'))  # Redirect to profile.html
+            return redirect(url_for('profile'))
         else:
             flash('Invalid username or password', 'danger')
             return redirect(url_for('login'))
@@ -200,81 +248,55 @@ def login():
     return render_template('login.html')
 
 
-
-
-
-# Logout
 @app.route('/logout')
-@login_required
 def logout():
-    logout_user()  # Flask-Login handles the session cleanup
+    session.pop('username', None)
     flash("Logged out successfully.", "success")
     return redirect(url_for('login'))
 
 
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('Please log in to access this page.', 'danger')
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-@app.route('/menu')
-def menu_page():
-    search_query = request.args.get('search', '').strip()  # Get search input from query parameters
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    if search_query:
-        cursor.execute("""
-            SELECT m.id, m.name, m.price, m.category, i.image_url
-            FROM menu_items m
-            LEFT JOIN images i ON m.id = i.menu_item_id
-            WHERE m.name ILIKE %s OR m.category ILIKE %s
-            ORDER BY m.id;
-        """, (f'%{search_query}%', f'%{search_query}%'))
-    else:
-        cursor.execute("""
-            SELECT m.id, m.name, m.price, m.category, i.image_url
-            FROM menu_items m
-            LEFT JOIN images i ON m.id = i.menu_item_id
-            ORDER BY m.id;
-        """)
-
-    items = cursor.fetchall()  # Each item is a tuple: (id, name, price, category, image_url)
-
-    cursor.close()
-    conn.close()
-
-    return render_template('menu.html', items=items, search_query=search_query)
-
-
 @app.route('/profile')
-@login_required
+@login_required_custom
 def profile():
-    # Pass username to template
     return render_template('profile.html', username=session.get('username'))
 
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                (username, hashed_password)
+            )
+            conn.commit()
+            flash("Account created successfully!", "success")
+            return redirect(url_for('login'))
+        except Exception as e:
+            conn.rollback()
+            flash(f"Error: {e}", "danger")
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('signup.html')
 
 
 # -----------------------------
 # ONE-TIME: Create initial admin user
 # -----------------------------
-from werkzeug.security import generate_password_hash
-
 def create_admin_user():
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # Check if admin already exists
     cursor.execute('SELECT id FROM users WHERE username=%s', ('admin',))
     if cursor.fetchone() is None:
-        hashed_password = generate_password_hash("admin123")  # your desired password
+        hashed_password = generate_password_hash("admin123")
         cursor.execute(
             'INSERT INTO users (username, password, created_at) VALUES (%s, %s, NOW())',
             ('admin', hashed_password)
@@ -283,13 +305,14 @@ def create_admin_user():
         print("Admin user created.")
     else:
         print("Admin user already exists.")
-
     cursor.close()
     conn.close()
+
 
 # -----------------------------
 # MAIN
 # -----------------------------
 if __name__ == '__main__':
-    create_admin_user()
+    # Only run this once to create admin, then comment it out
+    # create_admin_user()
     app.run(debug=True, port=5001)
