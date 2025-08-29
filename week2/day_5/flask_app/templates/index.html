@@ -31,10 +31,9 @@
 
         <!-- Buttons -->
         <div class="mt-4 flex gap-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <a href="/albums/{{ album[0] }}">
+          <a href="/albums/{{ album.id }}">
             <button class="bg-blue-600 text-white px-4 py-2 rounded-full">Play</button>
           </a>
-
 
           <a href="/edit/{{ album.id }}">
             <button class="bg-green-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow hover:bg-green-700 transition">
@@ -49,9 +48,28 @@
           </form>
         </div>
       </div>
-
     </div>
     {% endfor %}
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="flex justify-center mt-10 space-x-2">
+    {% if page > 1 %}
+      <a href="{{ url_for('index', page=page-1, search=search_query) }}"
+         class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">Previous</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages+1) %}
+      <a href="{{ url_for('index', page=p, search=search_query) }}"
+         class="px-3 py-1 rounded {{ 'bg-gray-700 text-white' if p==page else 'bg-gray-200 hover:bg-gray-300' }} transition">
+        {{ p }}
+      </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+      <a href="{{ url_for('index', page=page+1, search=search_query) }}"
+         class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">Next</a>
+    {% endif %}
   </div>
 </main>
 

@@ -1,34 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 
-<main class="max-w-3xl mx-auto my-10 px-4 text-center">
+<main class="max-w-4xl mx-auto my-12 px-6">
   {% if album %}
-    <div class="bg-white rounded-3xl shadow-lg p-6">
+  <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
 
-      <!-- Album Cover -->
-      <img src="{{ album.image_url or 'https://picsum.photos/seed/' ~ album.id ~ '/500/500' }}" 
-           alt="{{ album.title }}" 
-           class="w-full h-80 object-cover rounded-xl shadow-lg mb-6">
+    <!-- Album Cover -->
+    <div class="relative w-full h-96">
+      <img 
+        src="{{ album.image_url or 'https://picsum.photos/seed/' ~ album.id ~ '/800/600' }}" 
+        alt="{{ album.title }}" 
+        class="w-full h-full object-cover"
+      >
+    </div>
 
-      <!-- Album Info -->
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ album.title }}</h1>
-      <p class="text-gray-500 mb-2">{{ album.release_year }} • {{ album.genre }}</p>
-      <p class="text-gray-700 mb-4">{{ album.description }}</p>
-      <p class="text-gray-600 mb-4">By: {{ album.artists }}</p>
+    <!-- Album Info -->
+    <div class="p-8">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-3">{{ album.title }}</h1>
+      <p class="text-gray-500 mb-2">
+        <span class="font-semibold">Year:</span> {{ album.release_year }} &nbsp;•&nbsp;
+        <span class="font-semibold">Genre:</span> {{ album.genre }}
+      </p>
+      <p class="text-gray-600 mb-2">
+        <span class="font-semibold">Artists:</span> {{ album.artists }}
+      </p>
+      <p class="text-gray-700 mb-6">{{ album.description }}</p>
+
+      <p class="text-yellow-500 font-semibold mb-4">Rating: {{ album.rating }}/10</p>
 
       <!-- Audio Player -->
       {% if album.audio_url %}
-      <audio controls class="w-full mt-4">
-        <source src="{{ album.audio_url }}" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
-      {% else %}
-      <p class="text-red-500">Audio file not available.</p>
+      <div class="mt-6 p-4 bg-gray-100 rounded-xl shadow-inner flex items-center gap-4">
+        <div class="flex-1">
+          <p class="font-semibold text-gray-800 mb-1">Listen to this album:</p>
+          <audio controls class="w-full rounded-lg">
+            <source src="{{ album.audio_url }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+        {% if album.image_url %}
+        <div class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden shadow-md">
+          <img src="{{ album.image_url }}" alt="{{ album.title }}" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
+      </div>
       {% endif %}
 
+      <!-- Buttons -->
+      <div class="flex gap-4 mt-6">
+        <a href="{{ url_for('edit', id=album.id) }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+          Edit Album
+        </a>
+        <a href="{{ url_for('index') }}" class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
+          Back to Albums
+        </a>
+      </div>
     </div>
+
+  </div>
   {% else %}
-    <p class="text-center text-gray-500 text-lg mt-6">Album not found.</p>
+  <p class="text-center text-gray-500 text-lg mt-12">Album not found.</p>
   {% endif %}
 </main>
 

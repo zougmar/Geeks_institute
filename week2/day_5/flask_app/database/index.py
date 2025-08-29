@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 import os
 from dotenv import load_dotenv
 
@@ -12,7 +13,8 @@ def connect_to_db():
             user=os.getenv("PGUSER"),
             password=os.getenv("PGPASSWORD"),
             port=os.getenv("PGPORT"),
-            sslmode="require"
+            sslmode="require",
+            cursor_factory=psycopg2.extras.DictCursor
         )
         conn.autocommit = True
         return conn
