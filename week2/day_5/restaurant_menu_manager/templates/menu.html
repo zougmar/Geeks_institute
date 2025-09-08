@@ -2,13 +2,21 @@
 
 {% block content %}
 
+
+
+<!-- Header -->
+<div class="relative bg-orange-300 from-indigo-600 to-indigo-400 text-white py-12 px-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold text-center">Delicious Menu</h1>
+    <p class="text-center mt-4 text-lg text-indigo-100">Explore our curated dishes and add your favorites to the menu!</p>
+</div>
+
 <!-- Search Bar -->
-<div class="max-w-xl mx-auto mt-6 mb-8 relative">
-    <form action="{{ url_for('menu') }}" method="GET" class="flex shadow-md rounded-lg overflow-hidden">
+<div class="max-w-xl mx-auto mb-8">
+    <form action="{{ url_for('menu') }}" method="GET" class="flex shadow-lg rounded-lg overflow-hidden">
         <input type="text" name="search" placeholder="Search menu items..." 
-               class="w-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-200"
+               class="w-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-gray-800 dark:text-gray-200"
                value="{{ request.args.get('search', '') }}">
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 flex items-center">
+        <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-3 flex items-center transition duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z"/>
@@ -18,85 +26,79 @@
     </form>
 </div>
 
-<!-- Header -->
-<div class="relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12 px-6 rounded-lg shadow-lg mb-8">
-    <h1 class="text-4xl font-bold max-w-2xl mx-auto text-center">Delicious Menu</h1>
-    <p class="text-center mt-4 max-w-xl mx-auto text-lg">Explore our curated dishes and add your favorites to the menu!</p>
-</div>
-
 <!-- Add Item Button -->
 <div class="flex justify-center mb-8">
-    <a href="{{ url_for('add_item') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition duration-200 font-semibold">
+    <a href="{{ url_for('add_item') }}" 
+       class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition duration-300 font-medium">
        + Add New Item
     </a>
 </div>
 
 <!-- Menu Items Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    {% for item in items %}
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
-        <!-- Image -->
-        <div class="h-48 w-full overflow-hidden rounded-t-lg">
-           <!-- {% set image_urls = {
-               'Appetizers': 'https://images.unsplash.com/photo-1604908177522-3f9b0b2a69a4?auto=format&fit=crop&w=800&q=80',
-               'Main Courses': 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=800&q=80',
-               'Desserts': 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
-               'Beverages': 'https://images.unsplash.com/photo-1598514982155-17f4c083f0a6?auto=format&fit=crop&w=800&q=80',
-               'Salads': 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=800&q=80',
-               'Soups': 'https://images.unsplash.com/photo-1604908177520-6b91d7e7b2d4?auto=format&fit=crop&w=800&q=80',
-               'Sandwiches': 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80',
-               'Pizza': 'https://images.unsplash.com/photo-1601924582975-6c64c21700f4?auto=format&fit=crop&w=800&q=80',
-               'Pasta': 'https://images.unsplash.com/photo-1604917867346-9a03f66ccf06?auto=format&fit=crop&w=800&q=80',
-               'Seafood': 'https://images.unsplash.com/photo-1600891964599-98a3e8f28f40?auto=format&fit=crop&w=800&q=80'
-           } %} -->
-           <img src="{{ item.image_url }}" 
-                alt="{{ item.name }}" class="object-cover h-full w-full">
-        </div>
+<div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for item in items %}
+        <div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-md hover:shadow-xl hover:scale-105 transition duration-300 flex flex-col overflow-hidden">
+            
+            <!-- Image -->
+            <div class="h-48 w-full overflow-hidden rounded-t-2xl">
+                <img src="{{ item.image_url }}" 
+                     alt="{{ item.name }}" 
+                     class="object-cover h-full w-full transform hover:scale-110 transition duration-500">
+            </div>
 
-        <!-- Item Details -->
-        <div class="p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-2">{{ item.name }}</h2>
-            <p class="text-gray-600 mb-2">{{ item.category or 'Uncategorized' }}</p>
-            <p class="text-gray-700 font-semibold mb-4">${{ '%.2f'|format(item.price) }}</p>
-            <!-- Action Buttons -->
-            <div class="flex space-x-2">
-                <a href="{{ url_for('update_item', item_id=item[0]) }}" class="bg-blue-500 text-white px-3 py-1 rounded shadow hover:bg-blue-600 transition duration-200 flex-1 text-center">
-                   Update
-                </a>
-                <a href="{{ url_for('delete_item', item_id=item[0]) }}" class="bg-red-500 text-white px-3 py-1 rounded shadow hover:bg-red-600 transition duration-200 flex-1 text-center" onclick="return confirm('Are you sure you want to delete this item?');">
-                   Delete
-                </a>
+            <!-- Item Details -->
+            <div class="p-5 flex flex-col flex-grow">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-1">{{ item.name }}</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ item.category or 'Uncategorized' }}</p>
+                <p class="text-lg font-bold text-gray-700 dark:text-gray-100 mb-4">${{ '%.2f'|format(item.price) }}</p>
+
+                <!-- Action Buttons -->
+                <div class="mt-auto flex gap-2">
+                    <a href="{{ url_for('update_item', item_id=item[0]) }}" 
+                       class="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition duration-300 shadow-sm hover:shadow-md">
+                       Update
+                    </a>
+                    <a href="{{ url_for('delete_item', item_id=item[0]) }}" 
+                       class="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition duration-300 shadow-sm hover:shadow-md"
+                       onclick="return confirm('Are you sure you want to delete this item?');">
+                       Delete
+                    </a>
+                </div>
             </div>
         </div>
+        {% else %}
+        <div class="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+            No menu items found.
+        </div>
+        {% endfor %}
     </div>
-    {% else %}
-    <div class="col-span-full text-center py-8 text-gray-500">
-        No menu items found.
-    </div>
-    {% endfor %}
 </div>
 
-
+<!-- Pagination -->
 {% if total_pages > 1 %}
-<div class="flex justify-center mt-8 space-x-2">
+<div class="flex justify-center mt-10 space-x-2">
     {% if page > 1 %}
-        <a href="{{ url_for('menu', page=page-1, search=search_query) }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">&laquo; Prev</a>
+        <a href="{{ url_for('menu', page=page-1, search=search_query) }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition duration-300">&laquo; Prev</a>
     {% endif %}
 
     {% for p in range(1, total_pages+1) %}
-        <a href="{{ url_for('menu', page=p, search=search_query) }}" class="px-4 py-2 rounded {% if p == page %}bg-blue-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+        <a href="{{ url_for('menu', page=p, search=search_query) }}" 
+           class="px-4 py-2 rounded transition duration-300 
+           {% if p == page %}bg-indigo-500 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
             {{ p }}
         </a>
     {% endfor %}
 
     {% if page < total_pages %}
-        <a href="{{ url_for('menu', page=page+1, search=search_query) }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next &raquo;</a>
+        <a href="{{ url_for('menu', page=page+1, search=search_query) }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition duration-300">Next &raquo;</a>
     {% endif %}
 </div>
 {% endif %}
+
 <!-- Background Gradient -->
 <div class="fixed inset-0 -z-10">
-    <div class="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-100"></div>
 </div>
 
 {% endblock %}

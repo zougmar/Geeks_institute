@@ -39,6 +39,44 @@
             "name": "public",
             "database": "public",
             "username": "postgres"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "restaurant",
+            "connectString": "postgresql://neondb_owner:npg_sd5hlAbVj1fM@ep-wild-wave-admkzeav-pooler.c-2.us-east-1.aws.neon.tech/restauranr_db?sslmode=require&channel_binding=require"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "music_db",
+            "connectString": "postgresql://neondb_owner:npg_m4UYkjEpOzq8@ep-divine-resonance-adt5d47j-pooler.c-2.us-east-1.aws.neon.tech/db?sslmode=require&channel_binding=require"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "event_db",
+            "connectString": "postgresql://neondb_owner:npg_1d5GwtQFTIli@ep-twilight-cell-addaupyh-pooler.c-2.us-east-1.aws.neon.tech/even_db?sslmode=require&channel_binding=require"
         }
-    ]
+    ],
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "liveServer.settings.port": 5501
 }

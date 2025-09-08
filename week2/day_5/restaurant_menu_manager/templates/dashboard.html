@@ -181,5 +181,25 @@
         }
     });
 </script>
+<script>
+    // Calculate total price for recent items table
+    function calculateTotal() {
+        const priceCells = document.querySelectorAll('#recentItemsTable tbody .price');
+        let total = 0;
+
+        priceCells.forEach(cell => {
+            // Remove $ sign and convert to float
+            const value = parseFloat(cell.textContent.replace('$', '')) || 0;
+            total += value;
+        });
+
+        // Update total price in the table footer
+        document.getElementById('totalPrice').textContent = `$${total.toFixed(2)}`;
+    }
+
+    // Run after page load
+    window.addEventListener('DOMContentLoaded', calculateTotal);
+</script>
+
 
 {% endblock %}

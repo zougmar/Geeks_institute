@@ -7,11 +7,13 @@ class Family():
         print(f"🎉 Congratulations to the {self.last_name} family for the birth of {kwargs.get('name')}!")
     
     def is_18(self, name):
-         for member in self.members:
-            if member['name'].lower() == name.lower():  
+        for member in self.members:
+            if member['name'].lower() == name.lower():
                 return member['age'] >= 18
-            print(f"No member named {name} found.")
-            return None if member['age'] >= 18 else False
+        # runs only if no member found
+        print(f"No member named {name} found.")
+        return None
+
     def family_presentation(self):
         print(f"👨‍👩‍👧‍👦 The {self.last_name} Family:")
         for member in self.members:
