@@ -1,6 +1,7 @@
-pattern = ''
+let pattern = "";
 
-for (let i = 0; i < 5; i++) {
-    pattern += '*'
-    console.log(pattern)
+for (let i = 1; i <= 6; i++) { 
+    pattern += "* ".repeat(i) + "\n";  
 }
+
+console.log(pattern);
