@@ -1,0 +1,23 @@
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(20, 20px); /* 20 columns */
+  grid-template-rows: repeat(20, 20px);   /* 20 rows */
+  gap: 1px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.square {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
