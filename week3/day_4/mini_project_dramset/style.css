@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  background: url("images/bg.jpg") no-repeat center center/cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 30px;
+  font-size: 3rem;
+  text-shadow: 2px 2px 5px black;
+}
+
+.drum-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 800px;
+}
+
+.drum {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #fff;
+  border-radius: 15px;
+  padding: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+}
+
+.drum:hover {
+  background: rgba(255, 165, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.playing {
+  transform: scale(1.2);
+  background: orange;
+  box-shadow: 0 0 25px yellow;
+}
