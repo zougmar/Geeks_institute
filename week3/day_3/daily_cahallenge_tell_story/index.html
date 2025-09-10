@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Challenge: Mad Libs</title>
+</head>
+<body>
+
+  <h1>Mad Libs</h1>
+
+  <form id="libform">
+    <label for="noun">Noun:</label>
+    <input type="text" id="noun"><br>
+
+    <label for="adjective">Adjective:</label>
+    <input type="text" id="adjective"><br>
+
+    <label for="person">Someone's Name:</label>
+    <input type="text" id="person"><br>
+
+    <label for="verb">Verb:</label>
+    <input type="text" id="verb"><br>
+
+    <label for="place">A place:</label>
+    <input type="text" id="place"><br><br>
+
+    <button id="lib-button" type="submit">Lib it!</button>
+  </form>
+
+  <button id="shuffle" style="display:none; margin-top:10px;">Shuffle Story</button>
+
+  <p><strong>Generated story:</strong> 
+    <span id="story"></span>
+  </p>
+
+  <script>
+    const form = document.getElementById("libform");
+    const storySpan = document.getElementById("story");
+    const shuffleBtn = document.getElementById("shuffle");
+
+    let stories = [];
+    let currentInputs = {};
+
+    // Story templates
+    const templates = [
+      (noun, adj, person, verb, place) => 
+        `${person} took a ${adj} ${noun} and decided to ${verb} all the way to ${place}.`,
+      
+      (noun, adj, person, verb, place) => 
+        `In ${place}, ${person} found a ${adj} ${noun} and started to ${verb} with it.`,
+      
+      (noun, adj, person, verb, place) => 
+        `Once upon a time, a ${adj} ${noun} wanted to ${verb}, so ${person} helped it travel to ${place}.`,
+      
+      (noun, adj, person, verb, place) =>
+        `Everybody in ${place} was shocked when ${person} used a ${adj} ${noun} to ${verb}.`
+    ];
+
+    // Form submit
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const noun = document.getElementById("noun").value.trim();
+      const adj = document.getElementById("adjective").value.trim();
+      const person = document.getElementById("person").value.trim();
+      const verb = document.getElementById("verb").value.trim();
+      const place = document.getElementById("place").value.trim();
+
+      if (!noun || !adj || !person || !verb || !place) {
+        alert("Please fill in all fields!");
+        return;
+      }
+
+      // Save current inputs
+      currentInputs = { noun, adj, person, verb, place };
+
+      // Generate first story
+      generateStory();
+
+      // Show shuffle button
+      shuffleBtn.style.display = "inline-block";
+    });
+
+    // Shuffle button
+    shuffleBtn.addEventListener("click", function() {
+      generateStory();
+    });
+
+    // Generate story using random template
+    function generateStory() {
+      const { noun, adj, person, verb, place } = currentInputs;
+      const randomIndex = Math.floor(Math.random() * templates.length);
+      const story = templates[randomIndex](noun, adj, person, verb, place);
+      storySpan.textContent = story;
+    }
+  </script>
+
+</body>
+</html>
