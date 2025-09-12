@@ -6,5 +6,6 @@ function funcOne() {
     alert(`inside the funcOne function ${a}`);
 }
 console.log(funcOne());
-
-// the function will return 3 because the variable a is declared with let so it will changes to 3 because of the condition if
+//  #1.2 What will happen if the variable is declared 
+// with const instead of let ?
+// It will give an error because we can't reassign a value to a constant variable.
