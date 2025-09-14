@@ -20,3 +20,9 @@ console.log(getCarHonda(inventory));
 
 
 // Part 2
+
+function sortCarInventoryByYear(carInventory) {
+  return carInventory.sort((a, b) => a.car_year - b.car_year);
+}
+
+console.log(sortCarInventoryByYear(inventory));
