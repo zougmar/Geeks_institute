@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Display Data</title>
+</head>
+<body>
+  <h2>Received Data</h2>
+  <section id="output"></section>
+
+  <script>
+    // Get the query string (e.g., ?name=Omar&lastname=Zouglah)
+    const params = new URLSearchParams(window.location.search);
+
+    // Extract values
+    const name = params.get("name");
+    const lastname = params.get("lastname");
+
+    // Display in section
+    document.getElementById("output").textContent = 
+      `Hello ${name} ${lastname}, your data has been received!`;
+  </script>
+</body>
+</html>
