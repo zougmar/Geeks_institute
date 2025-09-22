@@ -135,13 +135,12 @@ if __name__ == "__main__":
         if cmd.lower() == "exit":
             print("👋 Goodbye!")
             break
-
         if cmd == "":
             if last_output:
                 print(last_output)
             else:
                 print("ℹ️ Nothing to repeat yet.")
-            continue
+            continue 
 
         if cmd.lower().startswith("find"):
             filters = parse_query(cmd)
