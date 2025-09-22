@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokedex</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Logo -->
+  <img src="./images/logo.png" alt="Pokemon Logo" class="logo">
+
+  <!-- Pokedex container with background -->
+  <div class="pokedex">
+    <!-- Screen area for Pokémon -->
+    <div class="screen">
+      <img id="pokemonImage" src="" alt="Pokemon">
+    </div>
+
+    <!-- Info card -->
+    <div class="info">
+      <h2 id="pokemonName">Pikachu</h2>
+      <p id="pokemonId">Pokemon n° 25</p>
+      <p id="pokemonHeight">Height: 4cm</p>
+      <p id="pokemonWeight">Weight: 60gr</p>
+      <p id="pokemonType">Type: electric</p>
+    </div>
+
+    <!-- Invisible overlay buttons -->
+    <button id="randomBtn" class="green-btn"></button>
+    <button id="prevBtn" class="left-btn"></button>
+    <button id="nextBtn" class="right-btn"></button>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instructions">
+    <h3>How to use:</h3>
+    <p>1- Press the <b style="color:green;">green</b> button to get a random Pokémon</p>
+    <p>2- Press the <b>left</b> and <b>right</b> buttons to see previous and next Pokémon.</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

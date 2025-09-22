@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.logo {
+  width: 220px;
+  margin-bottom: 20px;
+}
+
+/* Pokedex background */
+.pokedex {
+  position: relative;
+  width: 700px;
+  height: 450px;
+  background: url("./images/pokedex.png") no-repeat center/contain;
+}
+
+/* Pokémon screen */
+.screen {
+  position: absolute;
+  top: 40px;
+  left: 260px;
+  width: 180px;
+  height: 160px;
+  background: #2c3e50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.screen img {
+  width: 120px;
+  height: 120px;
+}
+
+/* Info panel */
+.info {
+  position: absolute;
+  bottom: 30px;
+  left: 240px;
+  width: 220px;
+  background: #ffe5b4;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Green button overlay */
+.green-btn {
+  position: absolute;
+  bottom: 40px;
+  right: 100px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: transparent; /* invisible, but clickable */
+  border: none;
+  cursor: pointer;
+}
+
+/* Left/Right button overlays */
+.left-btn, .right-btn {
+  position: absolute;
+  bottom: 80px;
+  left: 60px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.right-btn {
+  left: 120px;
+}
