@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Currency Converter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1d3557, #457b9d, #a8dadc);
+    }
+
+    .converter {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 350px;
+      color: white;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input[type="number"] {
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: #1d3557;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e63946;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    #rate {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="converter">
+    <h2>Currency Converter</h2>
+    
+    <label>From:</label>
+    <select id="fromCurrency"></select>
+    
+    <label>To:</label>
+    <select id="toCurrency"></select>
+    
+    <label>Amount:</label>
+    <input type="number" id="amount" value="1" min="0" />
+    
+    <button id="convertBtn">Convert</button>
+    
+    <p id="result">--</p>
+    <p id="rate"></p>
+  </div>
+
+  <script>
+    const apiKey = "7c83a1321f2f0329ce992244"; // 🔑 Replace with your key
+    const fromSelect = document.getElementById("fromCurrency");
+    const toSelect = document.getElementById("toCurrency");
+    const amountInput = document.getElementById("amount");
+    const result = document.getElementById("result");
+    const rateInfo = document.getElementById("rate");
+    const convertBtn = document.getElementById("convertBtn");
+
+    // Fetch supported currencies
+    async function loadCurrencies() {
+      const res = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/codes`);
+      const data = await res.json();
+      const codes = data.supported_codes;
+      codes.forEach(([code, name]) => {
+        let option1 = new Option(`${code} - ${name}`, code);
+        let option2 = new Option(`${code} - ${name}`, code);
+        fromSelect.add(option1);
+        toSelect.add(option2);
+      });
+      fromSelect.value = "USD";
+      toSelect.value = "EUR";
+    }
+
+    // Convert currency
+    async function convertCurrency() {
+      const from = fromSelect.value;
+      const to = toSelect.value;
+      const amount = amountInput.value;
+
+      if (!amount || amount <= 0) {
+        result.textContent = "--";
+        rateInfo.textContent = "";
+        return;
+      }
+
+      const res = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/pair/${from}/${to}/${amount}`);
+      const data = await res.json();
+
+      result.textContent = `${data.conversion_result.toFixed(2)} ${to}`;
+      rateInfo.textContent = `1 ${from} = ${data.conversion_rate.toFixed(4)} ${to}`;
+    }
+
+    // Auto convert on change
+    fromSelect.addEventListener("change", convertCurrency);
+    toSelect.addEventListener("change", convertCurrency);
+    amountInput.addEventListener("input", convertCurrency);
+    convertBtn.addEventListener("click", convertCurrency);
+
+    loadCurrencies();
+  </script>
+</body>
+</html>
