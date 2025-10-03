@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emoji Greeting App</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    form { margin: 20px auto; padding: 20px; border: 1px solid #ccc; width: 300px; border-radius: 10px; }
+    select, input { margin: 10px; padding: 8px; width: 80%; }
+    button { background: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Emoji Greeting App</h1>
+  <form action="/greet" method="POST">
+    <input type="text" name="name" placeholder="Enter your name" required /><br/>
+    <select name="emoji" required>
+      <option value="😀">😀</option>
+      <option value="🎉">🎉</option>
+      <option value="🌟">🌟</option>
+      <option value="🎈">🎈</option>
+      <option value="👋">👋</option>
+    </select><br/>
+    <button type="submit">Greet Me!</button>
+  </form>
+</body>
+</html>
