@@ -99,7 +99,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT /users/:id - update username and/or password (demo only)
+
 router.put('/:id', async (req, res) => {
   try {
     const { username, password } = req.body ?? {};
